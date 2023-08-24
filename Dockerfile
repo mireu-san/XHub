@@ -1,5 +1,7 @@
 # 공식 Python 런타임을 기반 이미지로 사용합니다.
 FROM python:3.11.4-alpine3.18
+# FROM python:3.11.4-slim-bullseye
+
 
 # 환경 변수 설정
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -10,6 +12,10 @@ RUN apk update \
     && apk add --no-cache postgresql-dev gcc musl-dev jpeg-dev zlib-dev \
     && python3 -m ensurepip \
     && pip3 install --no-cache --upgrade pip setuptools
+# RUN apt-get update && apt-get install -y \
+#     libpq-dev gcc libjpeg-dev zlib1g-dev \
+#     && apt-get clean && rm -rf /var/lib/apt/lists/* \
+#     && pip3 install --no-cache --upgrade pip setuptools
 
 # 컨테이너 내 작업 디렉토리를 /app으로 설정합니다.
 WORKDIR /app
