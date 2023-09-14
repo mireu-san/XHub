@@ -20,7 +20,7 @@ services:  # 서비스 목록을 정의합니다.
       # 현재 디렉토리를 컨테이너의 /app 디렉토리에 마운트합니다.
       - .:/app  
       # 본 장고의 정적 파일 경로를 설정합니다.
-      - ./staticfiles:/app/staticfiles
+      - ./staticfiles:/staticfiles
     hostname: django
 
   db:
@@ -37,30 +37,29 @@ services:  # 서비스 목록을 정의합니다.
     ports:
     - "6379:6379"
 
-  daphne:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8001:8001"
-    environment:
-      DJANGO_SETTINGS_MODULE: core.settings
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-    depends_on:
-      # - django
-      - db
-      - redis
-    volumes:
-      - .:/app
-      - ./staticfiles:/staticfiles
-      - daphne-socket:/tmp
-    hostname: daphne
-    # command: ["daphne", "-b", "0.0.0.0", "-p", "8001", "core.asgi:application"]
-    command: ["daphne", "-u", "/tmp/daphne.sock", "core.asgi:application"]
+  # daphne:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8001:8001"
+  #   environment:
+  #     DJANGO_SETTINGS_MODULE: core.settings
+  #     DB_NAME: ${DB_NAME}
+  #     DB_USER: ${DB_USER}
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #     DB_HOST: ${DB_HOST}
+  #     DB_PORT: ${DB_PORT}
+  #   depends_on:
+  #     # - django
+  #     - db
+  #     - redis
+  #   volumes:
+  #     - .:/app
+  #     - ./staticfiles:/staticfiles
+  #     - daphne-socket:/tmp
+  #   hostname: daphne
+  #   command: ["daphne", "-u", "/tmp/daphne.sock", "core.asgi:application"]
 
 
   nginx:
@@ -74,11 +73,11 @@ services:  # 서비스 목록을 정의합니다.
       - /etc/letsencrypt:/etc/letsencrypt
       # 본 nginx 의 정적 파일 경로를 설정합니다.
       - ./staticfiles:/staticfiles
-      - daphne-socket:/tmp
+      # - daphne-socket:/tmp
     depends_on:
       - django # django 서비스가 시작된 후에 nginx 서비스를 시작합니다.
-      - daphne
+      # - daphne
 
 volumes:  # 볼륨을 정의합니다.
   pgdata:  # pgdata 볼륨을 생성합니다.
-  daphne-socket:
+  # daphne-socket:
